@@ -6,6 +6,7 @@
   "main": "desktop/main.cjs",
   "description": "A calm, fast interface for the Zemirot Database with search, five transliteration styles, and filters.",
   "author": "Zemirot Studio",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build && npm run build:update",
@@ -45,7 +46,8 @@
     "files": [
       "dist/**/*",
       "desktop/**/*",
-      "package.json"
+      "package.json",
+      "LICENSE"
     ],
     "directories": {
       "output": "release",

@@ -499,6 +499,47 @@ export function AboutPage({ songs }: { songs: LibrarySong[] }) {
               authoritative description.
             </p>
           </section>
+
+          <section>
+            <h2>Licence and reuse</h2>
+            <p>
+              The Studio itself — the interface, the desktop shell, the
+              transliterator, and the scripts that build the data — is released
+              under the{" "}
+              <a
+                href="https://codeberg.org/Archaejon/Zemirot/blob/main/LICENSE"
+                target="_blank"
+                rel="noreferrer"
+              >
+                MIT licence
+              </a>
+              , © 2026 Archaejon. You may read it, change it, and redistribute
+              it, including commercially, as long as the copyright notice and
+              permission notice travel with substantial copies.
+            </p>
+            <p>
+              That licence stops at the code. The song data is not covered: the
+              archive records and the bundled Aleppo Baqashot collection remain
+              with their contributors and performers, and everything under{" "}
+              <code>public/data/</code> is excluded from the MIT grant.
+              Recordings and video are never bundled at all — they stream from
+              the source site. If you intend to republish any of that material,
+              read the{" "}
+              <a
+                href="https://www.zemirotdatabase.org/copyright.php"
+                target="_blank"
+                rel="noreferrer"
+              >
+                source copyright policy <ExternalIcon width={13} height={13} />
+              </a>
+              first.
+            </p>
+            <p className="muted">
+              The full MIT text ships with the source and with the installed
+              desktop app. The data notice sits beside the data it covers, in{" "}
+              <code>public/data/README.md</code>.
+            </p>
+          </section>
         </div>
 
         <aside className="about-aside">
@@ -521,6 +562,8 @@ export function AboutPage({ songs }: { songs: LibrarySong[] }) {
               <dd>Add Hebrew text; transliteration is automatic</dd>
               <dt>Built with</dt>
               <dd>React, TypeScript, Vite; no tracking</dd>
+              <dt>Licence</dt>
+              <dd>MIT for the code; the song data is excluded</dd>
             </dl>
           </section>
           <section className="panel aside-card">

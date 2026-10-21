@@ -263,6 +263,25 @@ export default function App() {
               </a>
               . Not affiliated with the archive.
             </p>
+            <p className="footer-note footer-legal">
+              The{" "}
+              <a
+                href="https://codeberg.org/Archaejon/Zemirot/blob/main/LICENSE"
+                target="_blank"
+                rel="noreferrer"
+              >
+                MIT licence
+              </a>{" "}
+              covers the code, not the songs.{" "}
+              <a
+                href="https://codeberg.org/Archaejon/Zemirot"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Source on Codeberg
+              </a>
+              .
+            </p>
           </div>
           <div className="footer-right">
             <p className="footer-note">

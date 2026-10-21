@@ -2184,6 +2184,12 @@ main {
   line-height: 1.65;
 }
 
+.footer-legal {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
 .footer-right {
   text-align: right;
 }
