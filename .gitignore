@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+release/
+*.tsbuildinfo
+
+# Generated from vite.config.ts by a stray tsc run
+vite.config.js
+
+# Local tooling and scrape cache
+.tools/
+.cache/
+
+# Logs
+*.log
+
+# Scratch screenshots at the repo root (documentation images live in docs/)
+/*.png

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Download Zemirot Studio</title>
+    <style>
+      :root {
+        --bg: #f5efe3;
+        --bg-deep: #efe5d4;
+        --paper: #fffaf0;
+        --ink: #241c16;
+        --ink-2: #4c3e34;
+        --line: #d9c9b2;
+        --accent: #8a5a2b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 20px;
+        background:
+          radial-gradient(circle at 15% 10%, #fff9ee 0, transparent 45%),
+          linear-gradient(160deg, var(--bg), var(--bg-deep));
+        color: var(--ink);
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+
+      main {
+        width: 100%;
+        max-width: 560px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 36px 36px 30px;
+        box-shadow: 0 24px 60px -30px rgba(36, 28, 22, 0.45);
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      header img {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+        font-size: 30px;
+        line-height: 1.15;
+        font-weight: 600;
+      }
+
+      header p {
+        margin: 2px 0 0;
+        color: var(--ink-2);
+        font-size: 14px;
+      }
+
+      p.lede {
+        margin: 0 0 22px;
+        color: var(--ink-2);
+        font-size: 15px;
+      }
+
+      a.button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 15px 20px;
+        border-radius: 12px;
+        background: var(--ink);
+        color: var(--paper);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        transition: transform 120ms ease, background 120ms ease;
+      }
+
+      a.button:hover {
+        background: #3a2c22;
+        transform: translateY(-1px);
+      }
+
+      a.button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      a.button span.size {
+        font-weight: 400;
+        opacity: 0.75;
+      }
+
+      dl {
+        display: grid;
+        grid-template-columns: 116px 1fr;
+        gap: 8px 14px;
+        margin: 24px 0 0;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-size: 13.5px;
+      }
+
+      dt {
+        color: var(--ink-2);
+      }
+
+      dd {
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        word-break: break-all;
+      }
+
+      .hash-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      button.copy {
+        flex: none;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink-2);
+        border-radius: 7px;
+        padding: 3px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      button.copy:hover {
+        background: var(--bg);
+      }
+
+      .notes {
+        margin-top: 22px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+
+      .notes strong {
+        color: var(--ink);
+      }
+
+      .notes ol {
+        margin: 6px 0 0;
+        padding-left: 20px;
+      }
+
+      footer {
+        margin-top: 18px;
+        font-size: 12px;
+        color: var(--ink-2);
+        text-align: center;
+        opacity: 0.85;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="/icon.png" alt="" width="56" height="56" />
+        <div>
+          <h1>Zemirot Studio</h1>
+          <p>Version {{VERSION}} &middot; Windows desktop app</p>
+        </div>
+      </header>
+
+      <p class="lede">
+        The full Zemirot Database in a quiet desktop window: search, three
+        transliteration styles, and filters. Works offline once installed.
+      </p>
+
+      <a
+        class="button"
+        href="/download/{{FILE}}"
+        download="{{FILE}}"
+        id="download-button"
+      >
+        Download for Windows <span class="size">({{SIZE}})</span>
+      </a>
+
+      <dl>
+        <dt>File</dt>
+        <dd><code>{{FILE}}</code></dd>
+        <dt>Version</dt>
+        <dd>{{VERSION}}</dd>
+        <dt>Size</dt>
+        <dd>{{SIZE}}</dd>
+        <dt>Platform</dt>
+        <dd>Windows 10 or 11, 64-bit</dd>
+        <dt>SHA-256</dt>
+        <dd>
+          <span class="hash-row">
+            <code id="hash">{{SHA256}}</code>
+            <button class="copy" type="button" id="copy-hash">Copy</button>
+          </span>
+        </dd>
+      </dl>
+
+      <div class="notes">
+        <strong>Installing</strong>
+        <ol>
+          <li>Run the downloaded file.</li>
+          <li>
+            Windows may show &ldquo;Unknown publisher&rdquo; because the build is
+            not code-signed. Choose <em>More info</em> &rarr; <em>Run anyway</em>.
+          </li>
+          <li>
+            Pick an install folder, then launch <em>Zemirot Studio</em> from the
+            Start Menu or desktop.
+          </li>
+        </ol>
+      </div>
+
+      <footer>
+        Served from this computer on {{ORIGIN}} &mdash; the installer is not
+        uploaded anywhere.
+      </footer>
+    </main>
+
+    <script>
+      const copyButton = document.getElementById("copy-hash");
+      copyButton?.addEventListener("click", async () => {
+        const value = document.getElementById("hash")?.textContent ?? "";
+        try {
+          await navigator.clipboard.writeText(value);
+          copyButton.textContent = "Copied";
+          setTimeout(() => (copyButton.textContent = "Copy"), 1600);
+        } catch {
+          const range = document.createRange();
+          const node = document.getElementById("hash");
+          if (node) {
+            range.selectNodeContents(node);
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
