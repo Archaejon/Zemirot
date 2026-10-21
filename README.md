@@ -61,7 +61,13 @@ Closing the window quits the process on Windows and Linux (macOS keeps the app r
 npm run package:win
 ```
 
-electron-builder produces `release/Zemirot-Studio-Setup-<version>.exe`: an NSIS installer, per-user by default, with a start-menu and desktop shortcut, installing into the folder you pick. The output is unsigned, so Windows SmartScreen will warn on first run.
+electron-builder produces `release/Zemirot-Studio-Setup-<version>.exe`: an NSIS wizard with a branded welcome page, an install-location step, and a finish page that can open the app. It installs for the current Windows account — no administrator prompt — with start-menu and desktop shortcuts, and uninstalling leaves your own songs and settings alone.
+
+![The installer's welcome page](docs/installer-welcome.png)
+
+The installer artwork in `build/installerSidebar.bmp`, `build/uninstallerSidebar.bmp`, and `build/installerHeader.bmp` is rendered from `scripts/installer-art/` by `npm run art:installer`; `npm run package:win` runs that first, so the bitmaps always match the app's typography.
+
+The build is not code-signed yet, so Windows shows "Windows protected your PC" on first run. `npm run check:signature` reports the Authenticode state of every file in `release/`, and [docs/signing-windows.md](docs/signing-windows.md) explains the certificate options and how to enable signing once one exists.
 
 To hand the file to someone over loopback without uploading it anywhere:
 
@@ -175,4 +181,4 @@ That licence covers the code and this documentation, not the songs. Everything u
 
 ## Status
 
-Version 1.3.0. Known limits: transliteration is a pronunciation guide rather than a scholarly edition, archive filters are inferred from free-text notes and so are a guide rather than an authority, a few songs are entirely unpointed and read approximately, Yiddish songs are never passed through the Hebrew transliterator, and AI drafts are only as good as the local model you choose.
+Version 1.3.1. Known limits: transliteration is a pronunciation guide rather than a scholarly edition, archive filters are inferred from free-text notes and so are a guide rather than an authority, a few songs are entirely unpointed and read approximately, Yiddish songs are never passed through the Hebrew transliterator, and AI drafts are only as good as the local model you choose.

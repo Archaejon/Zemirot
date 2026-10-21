@@ -1,0 +1,49 @@
+name: Windows installer
+
+# Produces the unsigned NSIS installer that the SignPath signing step consumes.
+# The canonical repository is on Codeberg; this mirror only exists so the build
+# runs on a GitHub-hosted runner, as SignPath Foundation requires.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build installer
+        run: npm run package:win
+
+      - name: Report signature state
+        run: npm run check:signature
+
+      - name: Upload unsigned installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: release/Zemirot-Studio-Setup-*.exe
+          if-no-files-found: error
+
+      # After SignPath approves the project, its signing action runs here and the
+      # signed file replaces the uploaded artifact.
