@@ -186,3 +186,43 @@ export function SparkIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function StarIcon({ filled = false, ...props }: IconProps & { filled?: boolean }) {
+  return (
+    <svg {...base} {...props} fill={filled ? "currentColor" : "none"}>
+      <path d="m12 3.7 2.5 5.1 5.6.8-4.1 4 .9 5.6-4.9-2.7-4.9 2.7.9-5.6-4.1-4 5.6-.8Z" />
+    </svg>
+  );
+}
+
+export function ListAddIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 6h10M4 12h10M4 18h7" />
+      <path d="M16 15v6M13 18h6" />
+    </svg>
+  );
+}
+
+export function ChevronUpIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="m6 15 6-6 6 6" />
+    </svg>
+  );
+}
+
+export function GripIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <g fill="currentColor" stroke="none">
+        <circle cx="9" cy="6" r="1.1" />
+        <circle cx="15" cy="6" r="1.1" />
+        <circle cx="9" cy="12" r="1.1" />
+        <circle cx="15" cy="12" r="1.1" />
+        <circle cx="9" cy="18" r="1.1" />
+        <circle cx="15" cy="18" r="1.1" />
+      </g>
+    </svg>
+  );
+}

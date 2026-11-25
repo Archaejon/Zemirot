@@ -421,6 +421,25 @@ export function AboutPage({ songs }: { songs: LibrarySong[] }) {
           </section>
 
           <section>
+            <h2>Favourites and setlists</h2>
+            <p>
+              The star on a song page keeps it in your favourites. <em>Add to setlist</em> files it
+              into one or more named setlists — a Friday table, a wedding, a particular occasion —
+              and the <a href="#/setlists">Setlists</a> page lets you rename a list, drag its songs
+              into order (or nudge them with the arrow buttons), and remove them. A list stores
+              references to the songs, not copies of their text.
+            </p>
+            <p>
+              Printing a setlist produces a sheet in the order you arranged. You can print the
+              reading you have chosen, all five readings side by side on a landscape page, and the
+              English translation wherever the record has one; those two settings are remembered.
+              The sheet ends with a short source note. Lists live in this browser only: they are
+              never uploaded or synced, and clearing site data removes them. Deleting a song you
+              added also removes it from any list.
+            </p>
+          </section>
+
+          <section>
             <h2>Optional local AI</h2>
             <p>
               The writing assistant is optional and local by default. It talks
@@ -560,6 +579,8 @@ export function AboutPage({ songs }: { songs: LibrarySong[] }) {
               <dd>Recordings and video where the source has them</dd>
               <dt>Your songs</dt>
               <dd>Add Hebrew text; transliteration is automatic</dd>
+              <dt>Your lists</dt>
+              <dd>Favourites and named setlists, printable, stored locally</dd>
               <dt>Built with</dt>
               <dd>React, TypeScript, Vite; no tracking</dd>
               <dt>Licence</dt>

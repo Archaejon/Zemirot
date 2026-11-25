@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 export type Route =
   | { view: "library" }
   | { view: "song"; id: number }
+  /** `id` is a setlist id or "favourites"; null for the overview. */
+  | { view: "setlists"; id: string | null }
   | { view: "about" };
 
 export function parseRoute(hash: string): Route {
@@ -12,6 +14,10 @@ export function parseRoute(hash: string): Route {
     const id = Number(parts[1]);
     if (Number.isFinite(id) && id > 0) return { view: "song", id };
     return { view: "library" };
+  }
+  if (parts[0] === "setlists") {
+    const id = parts[1] && /^[a-z0-9-]+$/i.test(parts[1]) ? parts[1] : null;
+    return { view: "setlists", id };
   }
   if (parts[0] === "about") return { view: "about" };
   return { view: "library" };

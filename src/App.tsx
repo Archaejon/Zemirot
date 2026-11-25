@@ -16,6 +16,15 @@ import {
 } from "./lib/edition";
 import { LibraryPage } from "./components/LibraryPage";
 import { SongPage } from "./components/SongPage";
+import { SetlistsPage } from "./components/SetlistsPage";
+import {
+  forgetSong,
+  loadCollections,
+  persistCollections,
+  saveSongSetlists,
+  toggleFavourite,
+  type Collections,
+} from "./lib/collections";
 import { AboutPage } from "./components/AboutPage";
 import { AddSongDialog } from "./components/AddSongDialog";
 import { DialectSwitch } from "./components/DialectSwitch";
@@ -65,6 +74,7 @@ export default function App() {
   );
   const [customSongs, setCustomSongs] = useState<SongDetail[]>(() => loadCustomSongs());
   const [addOpen, setAddOpen] = useState(false);
+  const [collections, setCollections] = useState<Collections>(() => loadCollections());
 
   const libraryScroll = useRef(0);
   const previousView = useRef(route.view);
@@ -165,11 +175,21 @@ export default function App() {
     return null;
   };
 
+  const updateCollections = (next: Collections) => {
+    setCollections(next);
+    persistCollections(next);
+  };
+
+  const saveSetlists = (songId: number, memberIds: string[], newName: string) => {
+    updateCollections(saveSongSetlists(collections, songId, memberIds, newName));
+  };
+
   const deleteCustomSong = (id: number) => {
     if (!isCustomId(id)) return;
     const next = customSongs.filter((song) => song.id !== id);
     persistCustomSongs(next);
     setCustomSongs(next);
+    updateCollections(forgetSong(collections, id));
     window.location.hash = "#/";
   };
 
@@ -210,6 +230,12 @@ export default function App() {
               className={joinClassNames(route.view === "library" && "is-current")}
             >
               Library
+            </a>
+            <a
+              href="#/setlists"
+              className={joinClassNames(route.view === "setlists" && "is-current")}
+            >
+              Setlists
             </a>
             <a
               href="#/about"
@@ -255,6 +281,10 @@ export default function App() {
               onQueryChange={setQuery}
               filters={filters}
               onFiltersChange={setFilters}
+              favourites={collections.favourites}
+              setlists={collections.setlists}
+              onToggleFavourite={(id) => updateCollections(toggleFavourite(collections, id))}
+              onSaveSetlists={saveSetlists}
             />
           ) : error ? (
             <ErrorScreen message={error} onRetry={() => setRetryToken((token) => token + 1)} />
@@ -269,8 +299,28 @@ export default function App() {
             onDialectChange={setDialect}
             customSong={customSong}
             onDeleteCustom={deleteCustomSong}
+            favourite={collections.favourites.includes(route.id)}
+            onToggleFavourite={() => updateCollections(toggleFavourite(collections, route.id))}
+            setlists={collections.setlists}
+            onSaveSetlists={saveSetlists}
           />
         )}
+
+        {route.view === "setlists" &&
+          (library ? (
+            <SetlistsPage
+              setId={route.id}
+              collections={collections}
+              songs={songs}
+              customSongs={customSongs}
+              dialect={dialect}
+              onChange={updateCollections}
+            />
+          ) : error ? (
+            <ErrorScreen message={error} onRetry={() => setRetryToken((token) => token + 1)} />
+          ) : (
+            <LoadingScreen />
+          ))}
 
         {route.view === "about" && <AboutPage songs={songs} />}
       </main>

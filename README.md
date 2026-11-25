@@ -12,6 +12,7 @@ Zemirot Studio is an independent interface, not affiliated with the archive. Son
 - **Search across both scripts** — English titles, Hebrew titles, first lyric lines, and transliterations. Hebrew matching ignores niqqud and final-letter forms; Latin matching folds diacritics, so `ḥayyim`, `chayim`, and `Hayyim` all meet.
 - **Five transliteration systems** — Modern, Ashkenazi, Mizrahi, Yemeni, and Kavkazi, generated from the Hebrew text itself rather than copied from the source site. Switch at any time; song pages can show all five in columns beside the Hebrew.
 - **Filters** — occasion, tradition, nusach, language, and whether a recording or translation exists.
+- **Favourites and setlists** — star songs, gather them into named setlists, drag them into order, and print a sheet in your chosen reading (or all five side by side), with translations if you like. Lists stay in local storage on your computer.
 - **Recordings and video** — streamed from the source site; nothing is downloaded or re-hosted.
 - **Desktop extras** — check the archive for new songs on demand or at launch, and draft a translation or context note with [Ollama](https://ollama.com) on your own machine.
 - **No accounts, no analytics, no project server.** Search and transliteration are local code; your preferences and added songs stay in local storage on your computer.
@@ -81,7 +82,7 @@ That serves a small page with the installer's size and SHA-256 on `127.0.0.1:459
 
 ```sh
 npm run typecheck   # tsc --noEmit
-npm test            # vitest run — 82 tests in 8 files, no network
+npm test            # vitest run — 96 tests in 9 files, no network
 npm run build       # typecheck, production bundle, updater bundle
 ```
 

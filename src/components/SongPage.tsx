@@ -20,6 +20,8 @@ import {
   useDocumentTitle,
 } from "../lib/format";
 import { isBaqashotId, isCustomId, songDataPath } from "../lib/edition";
+import { setlistsContaining, type Setlist } from "../lib/collections";
+import { SetlistDialog } from "./SetlistDialog";
 import {
   assistApi,
   assistErrorMessage,
@@ -40,7 +42,9 @@ import {
   ExternalIcon,
   MusicIcon,
   PlayIcon,
+  ListAddIcon,
   PrintIcon,
+  StarIcon,
   TrashIcon,
   VideoIcon,
 } from "./Icons";
@@ -51,6 +55,11 @@ interface SongPageProps {
   onDialectChange: (dialect: Dialect) => void;
   customSong?: SongDetail;
   onDeleteCustom?: (id: number) => void;
+  favourite: boolean;
+  onToggleFavourite: () => void;
+  setlists: Setlist[];
+  /** Make the song a member of these setlists, and of a new one if named. */
+  onSaveSetlists: (songId: number, memberIds: string[], newName: string) => void;
 }
 
 function useSongDetail(id: number, preset?: SongDetail) {
@@ -268,8 +277,17 @@ export function SongPage({
   onDialectChange,
   customSong,
   onDeleteCustom,
+  favourite,
+  onToggleFavourite,
+  setlists,
+  onSaveSetlists,
 }: SongPageProps) {
   const { song, error } = useSongDetail(id, customSong);
+  const [setlistOpen, setSetlistOpen] = useState(false);
+  const memberIds = useMemo(
+    () => (song ? setlistsContaining({ setlists }, song.id) : []),
+    [setlists, song],
+  );
   const dialectInfo = DIALECTS.find((item) => item.id === dialect) ?? DIALECTS[0];
   const [showAllRecordings, setShowAllRecordings] = useState(false);
   const [compare, setCompare] = useState(false);
@@ -293,6 +311,7 @@ export function SongPage({
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     setShowAllRecordings(false);
     setCompare(false);
+    setSetlistOpen(false);
   }, [id]);
 
   useEffect(() => () => activeDraft.current?.cancel(), []);
@@ -469,6 +488,19 @@ export function SongPage({
               <VideoIcon width={17} height={17} /> Watch
             </button>
           )}
+          <button
+            type="button"
+            className={joinClassNames("icon-button", "song-favourite", favourite && "is-on")}
+            aria-pressed={favourite}
+            aria-label={favourite ? "Remove from favourites" : "Add to favourites"}
+            title={favourite ? "Remove from favourites" : "Add to favourites"}
+            onClick={onToggleFavourite}
+          >
+            <StarIcon width={18} height={18} filled={favourite} />
+          </button>
+          <button type="button" className="button" onClick={() => setSetlistOpen(true)}>
+            <ListAddIcon width={16} height={16} /> Add to setlist
+          </button>
           {song.sourceUrl && (
             <a className="button" href={song.sourceUrl} target="_blank" rel="noreferrer">
               Source page <ExternalIcon width={14} height={14} />
@@ -1119,6 +1151,18 @@ export function SongPage({
           </a>
         </aside>
       </div>
+
+      <SetlistDialog
+        open={setlistOpen}
+        songTitle={song.titleEn || song.titleHe}
+        setlists={setlists}
+        memberIds={memberIds}
+        onClose={() => setSetlistOpen(false)}
+        onSave={(ids, newName) => {
+          onSaveSetlists(song.id, ids, newName);
+          setSetlistOpen(false);
+        }}
+      />
     </article>
   );
 }

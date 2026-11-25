@@ -14,6 +14,8 @@ import { CATEGORY_BY_SLUG } from "../lib/taxonomy";
 import { ActiveFilterPills, Filters } from "./Filters";
 import { SearchBar } from "./SearchBar";
 import { SongCard } from "./SongCard";
+import { SetlistDialog } from "./SetlistDialog";
+import { setlistsContaining, type Setlist } from "../lib/collections";
 import { SparkIcon } from "./Icons";
 import { joinClassNames, useDocumentTitle } from "../lib/format";
 
@@ -25,6 +27,11 @@ interface LibraryPageProps {
   onQueryChange: (value: string) => void;
   filters: SearchFilters;
   onFiltersChange: (filters: SearchFilters) => void;
+  favourites: number[];
+  setlists: Setlist[];
+  onToggleFavourite: (id: number) => void;
+  /** Make the song a member of these setlists, and of a new one if named. */
+  onSaveSetlists: (songId: number, memberIds: string[], newName: string) => void;
 }
 
 const QUICK_OCCASIONS = [
@@ -47,6 +54,10 @@ export function LibraryPage({
   onQueryChange,
   filters,
   onFiltersChange,
+  favourites,
+  setlists,
+  onToggleFavourite,
+  onSaveSetlists,
 }: LibraryPageProps) {
   useDocumentTitle("Zemirot Studio");
   const deferredQuery = useDeferredValue(query);
@@ -59,6 +70,7 @@ export function LibraryPage({
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [activeId, setActiveId] = useState<number | null>(null);
+  const [setlistSong, setSetlistSong] = useState<LibrarySong | null>(null);
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
@@ -248,6 +260,9 @@ export function LibraryPage({
                       song={song}
                       dialect={dialect}
                       active={activeId === song.id}
+                      favourite={favourites.includes(song.id)}
+                      onToggleFavourite={onToggleFavourite}
+                      onAddToSetlist={setSetlistSong}
                       onFocus={() => setActiveId(song.id)}
                       onMouseEnter={() => setActiveId(song.id)}
                     />
@@ -282,6 +297,18 @@ export function LibraryPage({
           </footer>
         </section>
       </div>
+
+      <SetlistDialog
+        open={setlistSong !== null}
+        songTitle={setlistSong?.titleEn || setlistSong?.titleHe || "Song"}
+        setlists={setlists}
+        memberIds={setlistSong ? setlistsContaining({ setlists }, setlistSong.id) : []}
+        onClose={() => setSetlistSong(null)}
+        onSave={(memberIds, newName) => {
+          if (setlistSong) onSaveSetlists(setlistSong.id, memberIds, newName);
+          setSetlistSong(null);
+        }}
+      />
     </div>
   );
 }

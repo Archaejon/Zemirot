@@ -18,3 +18,6 @@ vite.config.js
 
 # Scratch screenshots at the repo root (documentation images live in docs/)
 /*.png
+
+# Recovered build artefacts kept for reference (not source)
+.recovery/

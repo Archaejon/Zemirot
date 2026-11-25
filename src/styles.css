@@ -950,6 +950,25 @@ main {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent), var(--shadow-md);
 }
 
+/* Song cards: a full-size link sits behind the content so the star and
+   setlist buttons can live inside the card. */
+.song-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent), var(--shadow-md);
+}
+.song-card-link {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.song-card-link:focus-visible {
+  outline: none;
+}
+
 .song-card-body {
   flex: 1;
   min-width: 0;
@@ -1048,6 +1067,46 @@ main {
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--muted);
+}
+
+.song-card-tools {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  gap: 4px;
+}
+.card-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  opacity: .6;
+  transition:
+    opacity .15s ease,
+    border-color .15s ease,
+    background .15s ease,
+    color .15s ease;
+}
+.song-card:hover .card-tool,
+.song-card:focus-within .card-tool,
+.card-tool.is-on {
+  opacity: 1;
+}
+.card-tool:hover {
+  border-color: var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.card-tool.is-on {
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  background: color-mix(in srgb, var(--gold) 15%, var(--surface));
+  color: var(--gold);
 }
 
 .song-card-arrow {
@@ -2604,6 +2663,14 @@ main {
     display: none;
   }
 
+  .song-card-tools {
+    gap: 2px;
+  }
+  .card-tool {
+    width: 28px;
+    height: 28px;
+  }
+
   .song-card-foot {
     margin-top: 8px;
     padding-top: 8px;
@@ -3450,6 +3517,691 @@ main {
 /* -------------------------------------------------------------------------- */
 /* Print: five-reading comparison                                             */
 /* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/* Favourites and setlists                                                    */
+/* -------------------------------------------------------------------------- */
+
+/* Setlists page, the add-to-setlist dialog, and the printed sheet */
+.setlists-page {
+  width: min(1220px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 36px 0 80px;
+}
+.setlists-head {
+  max-width: 720px;
+  margin-bottom: 30px;
+}
+.setlists-head h1 {
+  margin: 4px 0 10px;
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5vw, 54px);
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.02;
+}
+.setlists-lede {
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.setlists-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+.setlists-aside {
+  position: sticky;
+  top: 94px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+.setlist-nav {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease;
+}
+.setlist-nav:hover {
+  background: var(--surface-2);
+}
+.setlist-nav.is-current {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.setlist-nav > span:not(.setlist-nav-count) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.setlist-nav-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.setlist-nav.is-current .setlist-nav-count {
+  color: var(--accent-ink);
+}
+.setlist-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.setlists-aside-empty {
+  margin: 4px 4px 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.setlist-create {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.setlist-create label {
+  color: var(--ink-2);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.setlist-create-row {
+  display: flex;
+  gap: 6px;
+}
+.setlist-create-row input {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.setlist-create-row input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+.setlist-create-row .button {
+  min-height: 36px;
+  padding: 6px 12px;
+}
+.setlist-detail {
+  min-width: 0;
+}
+.setlist-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.setlist-detail-title,
+.setlist-title-input {
+  margin: 2px 0 6px;
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+}
+.setlist-title-input {
+  width: min(100%, 460px);
+  margin-left: -7px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+}
+.setlist-title-input:hover {
+  border-color: var(--line);
+}
+.setlist-title-input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+  background: var(--surface);
+}
+.setlist-count {
+  color: var(--muted);
+  font-size: 12px;
+}
+.setlist-actions {
+  display: flex;
+  flex: none;
+  gap: 8px;
+}
+.setlist-note {
+  margin: 12px 0 0;
+  color: var(--accent-ink);
+  font-size: 12px;
+}
+.setlist-print-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 2px;
+}
+.setlist-print-options-title {
+  margin-right: 2px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.print-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    border-color .15s ease,
+    background .15s ease,
+    color .15s ease;
+}
+.print-option input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.print-option.is-selected {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.setlist-songs {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.setlist-song {
+  display: grid;
+  grid-template-columns: 18px 34px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 16px 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+}
+.setlist-song--favourites {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+}
+.setlist-song:last-child {
+  border-bottom: 0;
+}
+.setlist-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  padding-top: 7px;
+  color: var(--muted);
+  cursor: grab;
+  opacity: .5;
+  transition: opacity .15s ease, color .15s ease;
+}
+.setlist-drag-handle:hover,
+.setlist-drag-handle:active,
+.setlist-song:focus-within .setlist-drag-handle {
+  color: var(--ink);
+  opacity: 1;
+}
+.setlist-drag-handle:active {
+  cursor: grabbing;
+}
+.setlist-song.is-dragging {
+  opacity: .45;
+}
+.setlist-song.is-drop-before {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+.setlist-song.is-drop-after {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.setlist-song-number {
+  padding-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
+}
+.setlist-song-main a {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -.015em;
+  line-height: 1.2;
+}
+.setlist-song-main a:hover {
+  color: var(--accent-ink);
+}
+.setlist-song-hebrew {
+  margin-top: 3px;
+  color: var(--ink-2);
+  font-family: var(--font-hebrew);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.setlist-song-line {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.setlist-song-note {
+  margin-top: 5px;
+  color: var(--accent-ink);
+  font-size: 11.5px;
+}
+.setlist-song-tools {
+  display: flex;
+  gap: 4px;
+  padding-top: 2px;
+}
+.song-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+}
+.song-tool:hover:not(:disabled) {
+  border-color: var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.song-tool:disabled {
+  opacity: .35;
+  cursor: default;
+}
+.setlist-detail-empty {
+  margin-top: 10px;
+  padding: 44px 28px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  text-align: center;
+}
+.setlist-detail-empty h2,
+.setlist-detail-empty h3 {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+}
+.setlist-detail-empty p {
+  max-width: 48ch;
+  margin: 8px auto 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.song-favourite {
+  flex: none;
+}
+.song-favourite.is-on {
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  background: color-mix(in srgb, var(--gold) 16%, var(--surface));
+  color: var(--gold);
+}
+.setlist-dialog {
+  width: min(520px, 100%);
+}
+.setlist-dialog .add-dialog-foot {
+  justify-content: flex-end;
+}
+.setlist-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.setlist-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 40vh;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+}
+.setlist-picker-list legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.setlist-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  cursor: pointer;
+}
+.setlist-picker-row.is-selected {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: var(--accent-soft);
+}
+.setlist-picker-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+.setlist-picker-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.setlist-picker-count {
+  color: var(--muted);
+  font-size: 11px;
+}
+.setlist-picker-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.setlist-picker-new {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.setlist-picker-new span {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.setlist-picker-new input {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+.setlist-picker-new input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+.setlist-picker-error {
+  margin: 0;
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+.setlist-print {
+  display: none;
+}
+@media (max-width: 900px) {
+  .setlists-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .setlists-aside {
+    position: static;
+  }
+  .setlists-page:not(.has-detail) .setlists-aside {
+    order: 1;
+  }
+  .setlists-page:not(.has-detail) .setlist-detail {
+    order: 2;
+  }
+  .setlists-page.has-detail .setlist-detail {
+    order: 1;
+  }
+  .setlists-page.has-detail .setlists-aside {
+    order: 2;
+  }
+  .setlist-detail-head {
+    flex-direction: column;
+  }
+}
+@media (max-width: 620px) {
+  .setlists-page {
+    width: calc(100% - 28px);
+    padding-top: 22px;
+  }
+  .setlist-song,
+  .setlist-song--favourites {
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+  .setlist-drag-handle,
+  .setlist-drag-hint {
+    display: none;
+  }
+  .setlist-song-main a {
+    font-size: 19px;
+  }
+}
+@media print {
+  @page setlist-wide {
+    size: landscape;
+    margin: 9mm 9mm 10mm;
+  }
+  body.is-printing-setlist {
+    background: #fff;
+    color: #17130f;
+  }
+  body.is-printing-setlist.print-five {
+    page: setlist-wide;
+  }
+  body.is-printing-setlist .site-header,
+  body.is-printing-setlist .site-footer,
+  body.is-printing-setlist .skip-link,
+  body.is-printing-setlist .setlists-head,
+  body.is-printing-setlist .setlists-layout {
+    display: none !important;
+  }
+  body.is-printing-setlist .setlists-page {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  body.is-printing-setlist .setlist-print {
+    display: block;
+  }
+  .setlist-print-head {
+    margin-bottom: 7mm;
+    padding-bottom: 3mm;
+    border-bottom: 1.5pt solid #9b8a76;
+  }
+  .setlist-print-head .eyebrow {
+    margin-bottom: 1.5mm;
+    color: #7a3411;
+    font-size: 8pt;
+  }
+  .setlist-print-head h1 {
+    color: #1c1712;
+    font-family: var(--font-serif);
+    font-size: 22pt;
+    font-weight: 500;
+  }
+  .setlist-print-meta {
+    margin-top: 1.5mm;
+    color: #5c5148;
+    font-size: 8.5pt;
+  }
+  .setlist-print-song {
+    margin-bottom: 5mm;
+    padding-bottom: 5mm;
+    border-bottom: .5pt solid #d4c8b8;
+  }
+  .setlist-print-song header {
+    display: flex;
+    align-items: baseline;
+    gap: 3mm;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .setlist-print-number {
+    color: #9b8a76;
+    font-size: 9pt;
+  }
+  .setlist-print-song h2 {
+    color: #1c1712;
+    font-family: var(--font-serif);
+    font-size: 15pt;
+    font-weight: 500;
+  }
+  .setlist-print-title-he {
+    margin-top: 1mm;
+    color: #4c3e34;
+    font-family: var(--font-hebrew);
+    font-size: 12.5pt;
+    text-align: right;
+  }
+  .setlist-print-hebrew {
+    margin-top: 2mm;
+    color: #241c16;
+    font-family: var(--font-hebrew);
+    font-size: 12pt;
+    line-height: 1.65;
+  }
+  .setlist-print-reading {
+    margin-top: 1.5mm;
+    color: #3c3129;
+    font-size: 9.5pt;
+    line-height: 1.55;
+  }
+  .setlist-print-table {
+    width: 100%;
+    margin-top: 2mm;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .setlist-print-table thead {
+    display: table-header-group;
+  }
+  .setlist-print-table th,
+  .setlist-print-table td {
+    padding: 1.5mm 1.7mm;
+    border-bottom: .5pt solid #d4c8b8;
+    color: #241f1a;
+    font-size: 7.8pt;
+    line-height: 1.35;
+    text-align: left;
+    vertical-align: top;
+  }
+  .setlist-print-table thead th {
+    background: #f0e9dd !important;
+    color: #4d4239;
+    font-size: 7pt;
+    letter-spacing: .04em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .setlist-print-table tbody th {
+    width: 15%;
+    background: #faf6ee !important;
+    font-family: var(--font-hebrew);
+    font-size: 9pt;
+    line-height: 1.45;
+    text-align: right;
+  }
+  .setlist-print-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .setlist-print-table tr.gap td {
+    height: 3mm;
+    padding: 0;
+    border: 0;
+  }
+  .setlist-print-translation {
+    margin-top: 2.5mm;
+    padding-top: 1.8mm;
+    border-top: .5pt dashed #d4c8b8;
+  }
+  .setlist-print-label {
+    margin-bottom: 1.2mm;
+    color: #7a3411;
+    font-size: 7pt;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+  .setlist-print-translation p:last-child {
+    color: #3c3129;
+    font-size: 9pt;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .setlist-print-missing {
+    color: #786858;
+    font-size: 9pt;
+    font-style: italic;
+  }
+  .setlist-print-foot {
+    margin-top: 6mm;
+    padding-top: 3mm;
+    border-top: .5pt solid #d4c8b8;
+    color: #786858;
+    font-size: 7.5pt;
+  }
+}
 
 @media print {
   /* Only the comparison sheet asks for landscape; printing a normal song or
