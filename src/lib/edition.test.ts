@@ -66,6 +66,13 @@ describe("toLibrarySong", () => {
     expect(card.hasAudio).toBe(false);
     expect(card.searchBlurb).toContain("Aleppo");
   });
+
+  it("marks whether the song has a translation", () => {
+    const withTranslation = buildCustomSong(INPUT, new Set());
+    expect(toLibrarySong(withTranslation).hasTranslation).toBe(true);
+    const withoutTranslation = buildCustomSong({ ...INPUT, translation: "  \n " }, new Set());
+    expect(toLibrarySong(withoutTranslation).hasTranslation).toBe(false);
+  });
 });
 
 describe("id ranges", () => {

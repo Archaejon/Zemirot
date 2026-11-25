@@ -1,12 +1,37 @@
-import type { LibrarySong } from "./types";
+import type { LibrarySong, TextLanguage } from "./types";
 import { DIALECT_IDS } from "./translit";
 
 export interface SearchFilters {
   occasions: string[];
   traditions: string[];
+  languages: TextLanguage[];
+  /** Only songs with at least one recording. */
+  hasAudio: boolean;
+  /** Only songs with an English translation. */
+  hasTranslation: boolean;
 }
 
-export const EMPTY_FILTERS: SearchFilters = { occasions: [], traditions: [] };
+export const EMPTY_FILTERS: SearchFilters = {
+  occasions: [],
+  traditions: [],
+  languages: [],
+  hasAudio: false,
+  hasTranslation: false,
+};
+
+/** Language facets in display order. */
+export const LANGUAGE_IDS: readonly TextLanguage[] = ["he", "yi", "other"];
+
+/** How many filters are switched on; each list item and each toggle counts once. */
+export function activeFilterCount(filters: SearchFilters): number {
+  return (
+    filters.occasions.length +
+    filters.traditions.length +
+    filters.languages.length +
+    (filters.hasAudio ? 1 : 0) +
+    (filters.hasTranslation ? 1 : 0)
+  );
+}
 
 export interface IndexedField {
   text: string;
@@ -163,6 +188,11 @@ export function matchesFilters(song: LibrarySong, filters: SearchFilters): boole
   ) {
     return false;
   }
+  if (filters.languages.length > 0 && !filters.languages.includes(song.language)) {
+    return false;
+  }
+  if (filters.hasAudio && !song.hasAudio) return false;
+  if (filters.hasTranslation && !song.hasTranslation) return false;
   return true;
 }
 
@@ -208,12 +238,21 @@ export function searchSongs(
 export interface FacetCounts {
   occasions: Map<string, number>;
   traditions: Map<string, number>;
+  languages: Map<TextLanguage, number>;
+  withAudio: number;
+  withTranslation: number;
 }
 
 export function buildFacetCounts(songs: LibrarySong[]): FacetCounts {
   const occasions = new Map<string, number>();
   const traditions = new Map<string, number>();
+  const languages = new Map<TextLanguage, number>();
+  let withAudio = 0;
+  let withTranslation = 0;
   for (const song of songs) {
+    languages.set(song.language, (languages.get(song.language) ?? 0) + 1);
+    if (song.hasAudio) withAudio += 1;
+    if (song.hasTranslation) withTranslation += 1;
     for (const occasion of song.occasions) {
       occasions.set(occasion, (occasions.get(occasion) ?? 0) + 1);
     }
@@ -221,9 +260,9 @@ export function buildFacetCounts(songs: LibrarySong[]): FacetCounts {
       traditions.set(tradition, (traditions.get(tradition) ?? 0) + 1);
     }
   }
-  return { occasions, traditions };
+  return { occasions, traditions, languages, withAudio, withTranslation };
 }
 
-export function toggleInList(list: string[], value: string): string[] {
+export function toggleInList<T extends string>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
 }

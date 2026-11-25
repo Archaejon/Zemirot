@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  activeFilterCount,
   buildFacetCounts,
   buildIndex,
   normalizeHebrew,
@@ -29,6 +30,7 @@ function song(overrides: Partial<LibrarySong> & Pick<LibrarySong, "id" | "titleH
     nusach: overrides.nusach,
     hasAudio: overrides.hasAudio ?? false,
     hasVideo: overrides.hasVideo ?? false,
+    hasTranslation: overrides.hasTranslation ?? false,
     language: overrides.language ?? "he",
     firstLineHe: overrides.firstLineHe ?? "",
     firstLineTranslit: overrides.firstLineTranslit ?? "",
@@ -134,13 +136,17 @@ describe("search", () => {
 
   it("applies occasion and tradition filters", () => {
     expect(
-      searchSongs(index, "", { occasions: ["weddings"], traditions: [] }).map((s) => s.id),
+      searchSongs(index, "", { ...EMPTY_FILTERS, occasions: ["weddings"] }).map((s) => s.id),
     ).toEqual([3]);
     expect(
-      searchSongs(index, "", { occasions: [], traditions: ["mizrahi"] }).map((s) => s.id),
+      searchSongs(index, "", { ...EMPTY_FILTERS, traditions: ["mizrahi"] }).map((s) => s.id),
     ).toEqual([3]);
     expect(
-      searchSongs(index, "", { occasions: ["weddings"], traditions: ["chasidic"] }),
+      searchSongs(index, "", {
+        ...EMPTY_FILTERS,
+        occasions: ["weddings"],
+        traditions: ["chasidic"],
+      }),
     ).toEqual([]);
   });
 });
@@ -150,5 +156,56 @@ describe("facet counts", () => {
     const counts = buildFacetCounts(songs);
     expect(counts.occasions.get("yom-shabbat")).toBe(1);
     expect(counts.traditions.get("mizrahi")).toBe(1);
+  });
+});
+
+describe("language and availability filters", () => {
+  const mixed = buildIndex([
+    song({ id: 10, titleEn: "Hebrew, recorded", titleHe: "א", hasAudio: true, hasTranslation: true }),
+    song({ id: 11, titleEn: "Hebrew, bare", titleHe: "ב" }),
+    song({ id: 12, titleEn: "Yiddish, recorded", titleHe: "ג", language: "yi", hasAudio: true }),
+    song({ id: 13, titleEn: "Other, translated", titleHe: "ד", language: "other", hasTranslation: true }),
+  ]);
+  const ids = (filters: Partial<typeof EMPTY_FILTERS>) =>
+    searchSongs(mixed, "", { ...EMPTY_FILTERS, ...filters }).map((s) => s.id).sort();
+
+  it("keeps songs in any selected language", () => {
+    expect(ids({ languages: ["yi"] })).toEqual([12]);
+    expect(ids({ languages: ["he", "other"] })).toEqual([10, 11, 13]);
+  });
+
+  it("keeps only songs with a recording or a translation when asked", () => {
+    expect(ids({ hasAudio: true })).toEqual([10, 12]);
+    expect(ids({ hasTranslation: true })).toEqual([10, 13]);
+    expect(ids({ hasAudio: true, hasTranslation: true })).toEqual([10]);
+  });
+
+  it("combines with the other filters and with a query", () => {
+    expect(ids({ languages: ["he"], hasAudio: true })).toEqual([10]);
+    expect(
+      searchSongs(mixed, "recorded", { ...EMPTY_FILTERS, languages: ["yi"] }).map((s) => s.id),
+    ).toEqual([12]);
+  });
+
+  it("counts languages, recordings, and translations", () => {
+    const counts = buildFacetCounts(mixed.map((entry) => entry.song));
+    expect(counts.languages.get("he")).toBe(2);
+    expect(counts.languages.get("yi")).toBe(1);
+    expect(counts.languages.get("other")).toBe(1);
+    expect(counts.withAudio).toBe(2);
+    expect(counts.withTranslation).toBe(2);
+  });
+
+  it("counts each active filter once", () => {
+    expect(activeFilterCount(EMPTY_FILTERS)).toBe(0);
+    expect(
+      activeFilterCount({
+        occasions: ["pesach", "sukkot"],
+        traditions: ["chasidic"],
+        languages: ["he"],
+        hasAudio: true,
+        hasTranslation: true,
+      }),
+    ).toBe(6);
   });
 });

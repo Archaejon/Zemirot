@@ -17,16 +17,27 @@ export function parseRoute(hash: string): Route {
   return { view: "library" };
 }
 
-export function useHashRoute(): Route {
-  const [route, setRoute] = useState<Route>(() => parseRoute(window.location.hash));
+export interface HashLocation {
+  route: Route;
+  /** The raw hash, including any library query string after the route. */
+  hash: string;
+}
+
+function readLocation(): HashLocation {
+  const hash = window.location.hash;
+  return { route: parseRoute(hash), hash };
+}
+
+export function useHashRoute(): HashLocation {
+  const [location, setLocation] = useState<HashLocation>(readLocation);
 
   useEffect(() => {
-    const onChange = () => setRoute(parseRoute(window.location.hash));
+    const onChange = () => setLocation(readLocation());
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
 
-  return route;
+  return location;
 }
 
 export function navigate(path: string): void {

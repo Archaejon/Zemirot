@@ -2,7 +2,9 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import type { DatasetMeta, LibrarySong } from "../lib/types";
 import type { Dialect } from "../lib/translit";
 import {
+  activeFilterCount,
   buildFacetCounts,
+  EMPTY_FILTERS,
   buildIndex,
   searchSongs,
   toggleInList,
@@ -101,8 +103,7 @@ export function LibraryPage({
     if (first) window.location.hash = `#/song/${first.id}`;
   };
 
-  const activeFilters =
-    filters.occasions.length + filters.traditions.length;
+  const activeFilters = activeFilterCount(filters);
   const isFiltering = query.trim().length > 0 || activeFilters > 0;
 
   return (
@@ -217,7 +218,7 @@ export function LibraryPage({
                   <button
                     type="button"
                     className="button"
-                    onClick={() => onFiltersChange({ occasions: [], traditions: [] })}
+                    onClick={() => onFiltersChange(EMPTY_FILTERS)}
                   >
                     Clear filters
                   </button>

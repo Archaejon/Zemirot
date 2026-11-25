@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Library, LibrarySong, SongDetail } from "./lib/types";
 import type { Dialect } from "./lib/translit";
-import { EMPTY_FILTERS, type SearchFilters } from "./lib/search";
+import type { SearchFilters } from "./lib/search";
+import { initialLibraryState, libraryHash, parseLibraryHash } from "./lib/libraryLink";
 import { useHashRoute } from "./lib/useHashRoute";
 import { joinClassNames, usePersistentState } from "./lib/format";
 import {
@@ -49,7 +50,7 @@ function ErrorScreen({ message, onRetry }: { message: string; onRetry: () => voi
 }
 
 export default function App() {
-  const route = useHashRoute();
+  const { route, hash } = useHashRoute();
   const [library, setLibrary] = useState<Library | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
@@ -58,8 +59,10 @@ export default function App() {
     if (typeof window === "undefined") return "light";
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
-  const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<SearchFilters>(EMPTY_FILTERS);
+  const [query, setQuery] = useState(() => initialLibraryState(window.location.hash).query);
+  const [filters, setFilters] = useState<SearchFilters>(
+    () => initialLibraryState(window.location.hash).filters,
+  );
   const [customSongs, setCustomSongs] = useState<SongDetail[]>(() => loadCustomSongs());
   const [addOpen, setAddOpen] = useState(false);
 
@@ -69,6 +72,26 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  // A link or bookmark that carries a search (#/?q=…) replaces the current one.
+  // A bare #/ (the Library link, or Back from a song) keeps what was there.
+  useEffect(() => {
+    if (route.view !== "library") return;
+    const fromLink = parseLibraryHash(hash);
+    if (!fromLink) return;
+    setQuery(fromLink.query);
+    setFilters(fromLink.filters);
+  }, [hash, route.view]);
+
+  // Mirror the search into the address bar without adding history entries, so
+  // the current view can be bookmarked or shared and Back still leaves the page.
+  useEffect(() => {
+    if (route.view !== "library") return;
+    const next = libraryHash({ query, filters });
+    if ((window.location.hash || "#/") !== next) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [query, filters, route.view, hash]);
 
   useEffect(() => {
     let active = true;

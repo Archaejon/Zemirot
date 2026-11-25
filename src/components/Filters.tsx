@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { CATEGORY_DEFINITIONS, TRADITION_BY_SLUG } from "../lib/taxonomy";
-import { occasionLabel, joinClassNames } from "../lib/format";
+import { occasionLabel, joinClassNames, languageLabel } from "../lib/format";
 import type { FacetCounts, SearchFilters } from "../lib/search";
-import { toggleInList } from "../lib/search";
+import { activeFilterCount, EMPTY_FILTERS, LANGUAGE_IDS, toggleInList } from "../lib/search";
 import { CloseIcon, FilterIcon } from "./Icons";
 
 interface FiltersProps {
@@ -11,13 +11,9 @@ interface FiltersProps {
   counts: FacetCounts;
 }
 
-function activeCount(filters: SearchFilters): number {
-  return filters.occasions.length + filters.traditions.length;
-}
-
 export function Filters({ filters, onChange, counts }: FiltersProps) {
   const [open, setOpen] = useState(false);
-  const total = activeCount(filters);
+  const total = activeFilterCount(filters);
 
   useEffect(() => {
     if (!open) return;
@@ -49,7 +45,9 @@ export function Filters({ filters, onChange, counts }: FiltersProps) {
         ),
     );
 
-  const clearAll = () => onChange({ occasions: [], traditions: [] });
+  const languages = LANGUAGE_IDS.filter((language) => (counts.languages.get(language) ?? 0) > 0);
+
+  const clearAll = () => onChange(EMPTY_FILTERS);
 
   return (
     <div className="filters">
@@ -156,12 +154,73 @@ export function Filters({ filters, onChange, counts }: FiltersProps) {
           </section>
         )}
 
+        {languages.length > 0 && (
+          <section className="filter-section" aria-labelledby="language-heading">
+            <h3 id="language-heading">Language</h3>
+            <div className="filter-options">
+              {languages.map((language) => {
+                const selected = filters.languages.includes(language);
+                const label = languageLabel(language);
+                const count = counts.languages.get(language) ?? 0;
+                return (
+                  <button
+                    key={language}
+                    type="button"
+                    className={joinClassNames("filter-chip", selected && "is-selected")}
+                    aria-pressed={selected}
+                    title={`${label}: ${count} songs`}
+                    onClick={() =>
+                      onChange({
+                        ...filters,
+                        languages: toggleInList(filters.languages, language),
+                      })
+                    }
+                  >
+                    <span>{label}</span>
+                    <span className="filter-chip-count">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <section className="filter-section" aria-labelledby="availability-heading">
+          <h3 id="availability-heading">Availability</h3>
+          <div className="filter-options">
+            <button
+              type="button"
+              className={joinClassNames("filter-chip", filters.hasAudio && "is-selected")}
+              aria-pressed={filters.hasAudio}
+              title={`${counts.withAudio} songs with a recording`}
+              onClick={() => onChange({ ...filters, hasAudio: !filters.hasAudio })}
+            >
+              <span>Has a recording</span>
+              <span className="filter-chip-count">{counts.withAudio}</span>
+            </button>
+            <button
+              type="button"
+              className={joinClassNames("filter-chip", filters.hasTranslation && "is-selected")}
+              aria-pressed={filters.hasTranslation}
+              title={`${counts.withTranslation} songs with a translation`}
+              onClick={() => onChange({ ...filters, hasTranslation: !filters.hasTranslation })}
+            >
+              <span>Has a translation</span>
+              <span className="filter-chip-count">{counts.withTranslation}</span>
+            </button>
+          </div>
+        </section>
+
         <p className="filters-note">
           Tradition tags (nusach, edah, and place) are not structured fields on
           the source site. They are read from the song page and its categories
           where possible; the bundled Baqashot are tagged Aleppo and Syrian from
           their collection. Treat the tags as a helpful guide, not an
           authoritative classification.
+        </p>
+        <p className="filters-note">
+          Filters live in the address bar, so a refined view can be bookmarked
+          or shared as one link.
         </p>
       </aside>
     </div>
@@ -188,6 +247,30 @@ export function ActiveFilterPills({
       remove: () =>
         onChange({ ...filters, traditions: filters.traditions.filter((s) => s !== slug) }),
     })),
+    ...filters.languages.map((language) => ({
+      slug: `language-${language}`,
+      label: languageLabel(language),
+      remove: () =>
+        onChange({ ...filters, languages: filters.languages.filter((l) => l !== language) }),
+    })),
+    ...(filters.hasAudio
+      ? [
+          {
+            slug: "availability-audio",
+            label: "Has a recording",
+            remove: () => onChange({ ...filters, hasAudio: false }),
+          },
+        ]
+      : []),
+    ...(filters.hasTranslation
+      ? [
+          {
+            slug: "availability-translation",
+            label: "Has a translation",
+            remove: () => onChange({ ...filters, hasTranslation: false }),
+          },
+        ]
+      : []),
   ];
 
   if (items.length === 0) return null;

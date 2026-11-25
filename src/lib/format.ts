@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { CATEGORY_BY_SLUG, traditionLabel } from "./taxonomy";
-import type { LibrarySong } from "./types";
+import type { LibrarySong, TextLanguage } from "./types";
 import type { Dialect } from "./translit";
+
+const LANGUAGE_LABELS: Record<TextLanguage, string> = {
+  he: "Hebrew / Aramaic",
+  yi: "Yiddish",
+  other: "Other language",
+};
+
+export function languageLabel(language: TextLanguage): string {
+  return LANGUAGE_LABELS[language] ?? language;
+}
 
 /** Label for any taxonomy slug (occasion, genre, or tradition). */
 export function categoryLabel(slug: string): string {

@@ -432,6 +432,7 @@ function toLibrarySong(song: SongDetail): LibrarySong {
     community: song.community,
     hasAudio: false,
     hasVideo: false,
+    hasTranslation: song.translation.trim().length > 0,
     language: "he",
     firstLineHe: firstLine,
     firstLineTranslit: translit.modern,

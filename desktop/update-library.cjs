@@ -47382,6 +47382,7 @@ function buildLibrarySong(song) {
     nusach: song.nusach,
     hasAudio: song.recordings.length > 0,
     hasVideo: song.videos.length > 0,
+    hasTranslation: song.translation.trim().length > 0,
     language: song.language,
     firstLineHe,
     firstLineTranslit: firstLineVocalized ? transliterate(firstLineVocalized, "modern") : "",

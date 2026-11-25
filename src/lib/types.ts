@@ -77,6 +77,8 @@ export interface LibrarySong {
   nusach?: string;
   hasAudio: boolean;
   hasVideo: boolean;
+  /** True when the song record carries a non-empty English translation. */
+  hasTranslation: boolean;
   language: TextLanguage;
   firstLineHe: string;
   firstLineTranslit: string;

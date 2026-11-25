@@ -81,7 +81,7 @@ That serves a small page with the installer's size and SHA-256 on `127.0.0.1:459
 
 ```sh
 npm run typecheck   # tsc --noEmit
-npm test            # vitest run — 69 tests in 7 files, no network
+npm test            # vitest run — 82 tests in 8 files, no network
 npm run build       # typecheck, production bundle, updater bundle
 ```
 

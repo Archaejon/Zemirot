@@ -102,6 +102,7 @@ export function toLibrarySong(song: SongDetail): LibrarySong {
     community: song.community,
     hasAudio: false,
     hasVideo: false,
+    hasTranslation: song.translation.trim().length > 0,
     language: song.language,
     firstLineHe: line,
     firstLineTranslit: line ? transliterate(line, "modern", { capitalize: "sentence" }).slice(0, 300) : "",
