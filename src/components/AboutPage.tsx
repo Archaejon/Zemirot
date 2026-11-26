@@ -526,7 +526,7 @@ export function AboutPage({ songs }: { songs: LibrarySong[] }) {
               transliterator, and the scripts that build the data — is released
               under the{" "}
               <a
-                href="https://codeberg.org/Archaejon/Zemirot/blob/main/LICENSE"
+                href="https://github.com/Archaejon/Zemirot/blob/main/LICENSE"
                 target="_blank"
                 rel="noreferrer"
               >

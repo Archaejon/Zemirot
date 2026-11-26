@@ -1,8 +1,7 @@
 name: Windows installer
 
 # Produces the unsigned NSIS installer that the SignPath signing step consumes.
-# The canonical repository is on Codeberg; this mirror only exists so the build
-# runs on a GitHub-hosted runner, as SignPath Foundation requires.
+# It runs on a GitHub-hosted runner, as SignPath Foundation requires.
 
 on:
   push:

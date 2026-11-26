@@ -339,7 +339,7 @@ export default function App() {
             <p className="footer-note footer-legal">
               The{" "}
               <a
-                href="https://codeberg.org/Archaejon/Zemirot/blob/main/LICENSE"
+                href="https://github.com/Archaejon/Zemirot/blob/main/LICENSE"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -347,11 +347,11 @@ export default function App() {
               </a>{" "}
               covers the code, not the songs.{" "}
               <a
-                href="https://codeberg.org/Archaejon/Zemirot"
+                href="https://github.com/Archaejon/Zemirot"
                 target="_blank"
                 rel="noreferrer"
               >
-                Source on Codeberg
+                Source on GitHub
               </a>
               .
             </p>

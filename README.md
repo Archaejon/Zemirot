@@ -30,7 +30,7 @@ The app itself is fully offline once installed. Only the archive update check, r
 ## Quick start (browser edition)
 
 ```sh
-git clone ssh://git@codeberg.org/Archaejon/Zemirot.git
+git clone https://github.com/Archaejon/Zemirot.git
 cd Zemirot
 npm ci
 npm run dev

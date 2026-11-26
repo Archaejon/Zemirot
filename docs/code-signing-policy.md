@@ -18,7 +18,7 @@ project.
 
 ## How a signed artifact is produced
 
-1. A maintainer tags a commit on the Codeberg repository (`v<version>`).
+1. A maintainer tags a commit on the GitHub repository (`v<version>`).
 2. The same commit is built by the GitHub Actions workflow in
    `.github/workflows/windows-installer.yml`, on a GitHub-hosted Windows runner,
    from the repository contents alone. No local binary, prebuilt bundle, or
