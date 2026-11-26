@@ -6,6 +6,28 @@ Each entry: date, what was done, what's now true, open issues, and suggested nex
 
 ---
 
+## 2026-11-26 (later) — CI on every push
+
+### Done
+- `dadb5da` added **`.github/workflows/ci.yml`**. It runs on every push and pull request on `ubuntu-latest` with Node 22 and `npm ci` (Electron binary download skipped), then:
+  - `npm run typecheck`, `npm test` and `npm run build`;
+  - `git diff --exit-code desktop/update-library.cjs`, which fails if the committed updater bundle is stale. Local esbuild/vite/vitest/typescript versions match `package-lock.json`, so the check is reliable.
+  - It cancels superseded runs per ref. The README "Checks" section now mentions it.
+- First run passed in 25 s ([run 45726694288](https://github.com/Archaejon/Zemirot/actions/runs/45726694288)), with a warning that `actions/*@v4` target the deprecated Node 20.
+- `11b384f` moved `checkout`, `setup-node` and `upload-artifact` to **v7** (Node 24) in both `ci.yml` and `windows-installer.yml`. Second run passed in 27 s with no warning ([run 45726814858](https://github.com/Archaejon/Zemirot/actions/runs/45726814858)).
+
+### Current state
+- `main` = `origin/main`, CI green.
+- **The Windows installer workflow has not run since the bump to v7** (it only runs on `v*` tags or by hand). `upload-artifact@v7` is untested there.
+
+### Next steps
+1. Optionally trigger `windows-installer.yml` by hand (`gh workflow run windows-installer.yml`) to confirm the v7 actions on Windows.
+2. Data-licensing question with zemirotdatabase.org.
+3. Rebuild `dist/` and try the desktop app; export/import including `zs-collections`.
+4. Run `gh auth setup-git` once so a plain `git push` works over HTTPS.
+
+---
+
 ## 2026-11-26 — Moved the project to GitHub
 
 ### Done
