@@ -88,6 +88,8 @@ npm run build       # typecheck, production bundle, updater bundle
 
 Tests cover transliteration, search matching, compare rows, the custom-song edition, archive update helpers, pronunciation data, and the assistant's error handling. They run in a Node environment (`vite.config.ts`), so no browser or Electron is needed.
 
+GitHub Actions runs all three on every push and pull request (`.github/workflows/ci.yml`), and fails if `desktop/update-library.cjs` is out of date with the parser it bundles.
+
 ## Project layout
 
 ```
