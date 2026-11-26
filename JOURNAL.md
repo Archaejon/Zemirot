@@ -6,6 +6,28 @@ Each entry: date, what was done, what's now true, open issues, and suggested nex
 
 ---
 
+## 2026-11-26 (late) — Windows installer workflow working on GitHub
+
+### Done
+- Ran `windows-installer.yml` by hand three times. The v7 actions (checkout, setup-node, upload-artifact) worked throughout. Two old problems surfaced and were fixed:
+  1. [Run 45727045438](https://github.com/Archaejon/Zemirot/actions/runs/45727045438) failed after the installer was built: electron-builder detected CI and tried to **publish a GitHub release**, then failed with no `GH_TOKEN`. Fix `ff92591`: `package:win` now passes `--publish never` (implicit publishing is also removed in electron-builder v27).
+  2. [Run 45727321306](https://github.com/Archaejon/Zemirot/actions/runs/45727321306) failed at **Report signature state**: steps run in PowerShell 7, whose `PSModulePath` made the child Windows PowerShell 5.1 fail to load `Get-AuthenticodeSignature`. Fix `be1b37a`: `scripts/check-signature.mjs` starts PowerShell without the inherited `PSModulePath`.
+- [Run 45727668828](https://github.com/Archaejon/Zemirot/actions/runs/45727668828) **passed**: it built `Zemirot-Studio-Setup-1.3.1.exe` (108 MB) and reported it `NotSigned`, as expected with no certificate yet. It uploaded the `windows-installer` artifact (113 MB zipped), which expires 2027-02-24.
+- CI passed on every commit (`ac6784e`, `ff92591`, `be1b37a`).
+
+### Current state
+- `main` = `origin/main`; CI and the Windows installer workflow are both green.
+- The installer is unsigned; SignPath signing is still to be set up (`docs/signing-windows.md`).
+- The installer was built but not installed or run on a Windows machine.
+
+### Next steps
+1. Download the artifact (`gh run download 45727668828 --repo Archaejon/Zemirot`) and try the installer on Windows.
+2. Data-licensing question with zemirotdatabase.org.
+3. SignPath application, now that the GitHub build is reproducible.
+4. Export/import of custom songs and `zs-collections`.
+
+---
+
 ## 2026-11-26 (later) — CI on every push
 
 ### Done
