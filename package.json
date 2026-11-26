@@ -21,7 +21,7 @@
     "desktop": "npm run build && electron .",
     "art:installer": "electron scripts/installer-art/main.cjs",
     "download-page": "node scripts/serve-download.mjs",
-    "package:win": "npm run build && npm run art:installer && electron-builder --win nsis --x64",
+    "package:win": "npm run build && npm run art:installer && electron-builder --win nsis --x64 --publish never",
     "check:signature": "node scripts/check-signature.mjs"
   },
   "dependencies": {
