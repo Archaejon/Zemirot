@@ -40,8 +40,18 @@ function signatureOf(file) {
     "} | ConvertTo-Json -Compress",
   ].join("\n");
 
+  // When npm runs under PowerShell 7 (as on GitHub's Windows runners), the
+  // inherited PSModulePath points Windows PowerShell 5.1 at PowerShell 7's
+  // modules, and Get-AuthenticodeSignature fails to load. Without it, 5.1
+  // rebuilds its default module path.
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.toLowerCase() === "psmodulepath") delete env[key];
+  }
+
   const output = execFileSync("powershell", ["-NoProfile", "-NonInteractive", "-Command", script], {
     encoding: "utf8",
+    env,
   });
   return JSON.parse(output.trim());
 }
